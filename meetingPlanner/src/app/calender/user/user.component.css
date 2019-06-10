@@ -1,0 +1,94 @@
+.navbar 
+{
+    background: #41295a;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #2F0743, #41295a);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #2F0743, #41295a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    box-shadow: 0 3px 20px 3px  grey;
+   
+
+}
+.navbar-brand
+{
+    color:white!important;
+}
+
+.active a
+{
+    padding: 7px 40px;
+    
+    box-shadow: 0px 1px 5px skyblue;
+    
+    border-radius: 5px;
+
+}
+
+
+.not-active a{
+    padding: 7px 40px;
+    border: 3px whitesmoke!important;
+    
+}
+
+.nav-item {
+    
+    padding: 7px 30px; 
+}
+
+
+.not-active a:hover{
+    box-shadow: 1px 1px 10px paleturquoise;
+    border-radius: 5px;
+    
+}
+
+.online
+{
+
+color:green;
+
+display:inline-block;
+}
+
+ 
+.online-icon{
+
+    height: 10px;
+    width: 10px;
+    background-color:green;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+
+.btn-primary
+{
+    background-color: indigo;
+    border:1px solid indigo!important;
+    box-shadow:1px 2px 5px indigo;
+
+}
+
+.btn-outline-secondary
+{
+    
+    background-color:white!important;
+    color:indigo;
+    border:1px solid indigo!important;
+    box-shadow:1px 2px 5px indigo;
+
+}
+
+
+.calendar-view
+{
+    margin:1rem!important;
+}
+@media only screen and (min-width:768px)
+{
+	
+.calendar-view
+{
+	margin:3rem!important;
+}
+}

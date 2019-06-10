@@ -1,0 +1,228 @@
+ 
+<nav class="navbar navbar-expand-lg navbar-light bg-light"> <h3 style="color:skyblue"> Meeting Planner</h3>
+  <hr>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-end mr-auto" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-5" >
+        <li class="nav-item active">
+            <a class="nav-link" href="#" style="color:paleturquoise!important;">Signup <span class="sr-only">(current)</span></a>
+          </li>
+      <li class="nav-item not-active " >
+        <a class="nav-link " [routerLink]="['/login']" style="color:paleturquoise!important;">Login </a>
+      </li>
+    </ul>
+  
+    
+  </div>
+</nav>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle" style="color: darkviolet">Meeting Planner</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" >
+            <h6  class="p-2" style="color:white;background-color:darkorchid"> 1) User Slots management system (Flow for Admin User)
+              </h6>
+            <p class="ml-3">
+                Upon login, admin User will be taken to a dashboard, showing all
+                normal users in a list format
+                <br> Upon clicking on any user, admin will be taken to user's current
+                calendar, with current date selected, by default.
+                <br> Admin has an option to  add/delete/update meetings on any day, by
+                clicking on a appropriate day-cell/timeline.
+                
+            </p>
+
+            <h6  class="p-2" style="color:white;background-color:darkorchid"> 2)User Slots management system (Flow for normal User) 
+              </h6>
+            <p class="ml-3"> 
+              Upon login, normal User will be taken to a dashboard showing his
+                current months', planned meetings, in the form of a calendar. 
+                <br> User will be able to only view his meeting slots and he will not be
+                able to make any changes
+            </p>
+            
+
+            <h6  class="p-2" style="color:white;background-color:darkorchid"> 3) User alerts management system</h6>
+            <p class="ml-3">
+                Normal User will also be notified in real time, though an alert if he is
+                online, and email (irrespective of whether he is online or offline), when
+                <br>
+                A meeting is created by admin
+                <br>A meeting is changed by admin
+                 <br>1 minute before meeting, with an option to snooze or dismiss. If
+                snoozed, alert will come again in 5 seconds, if snoozed again, it
+                will re-appear in next 5 seconds and so on. Once dismissed,
+                alert will no longer appear
+            </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background-color: darkviolet" >Close</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<div class="container">
+  <div class="d-xl-flex flex-xl-nowrap d-sm-flex mb-3 flex-sm-wrap  mt-5">
+      <div class="p-2 m-3 w-75">
+          <div class="jumborton">
+                  <h1 class="display-6" style="color: darkviolet">Welcome to Meeting Planner</h1>
+                  <p class="lead" style="color:mediumorchid">This is a simple meeting planner where you can schedule your meeting in a easy way </p>
+                  <hr class="my-4" style="border-top:2px solid darkviolet">
+                  <p class="display-6" style="color: darkviolet">You will get notification and alerts(if you are online) before 5 mins of meeting and has snooze option.</p>
+                  <button type="button" class="btn btn-lg"  data-toggle="modal" data-target="#exampleModalCenter" style="background-color:purple;color:white" >more</button>
+                
+          </div>
+      </div>
+
+      <div class="p-2 m-3 w-75" >
+        
+          <h6 class="custom-heading">Register here</h6>
+          <hr>
+          <div class="jumborton mt-2">
+              <form>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="firstname">Firstname</label>
+                      <input type="text" [(ngModel)]='firstName' name='firstName' #firstname='ngModel' class="form-control" id="firstname" placeholder="firstname" required>
+                      <div [hidden]="firstname.pristine || firstname.valid" class="alert alert-warning">
+                          <div *ngIf="firstname.errors?.required">
+                              Please enter firstname
+                          </div>
+                      </div>
+                   
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="lastname">Lastname</label>
+                      <input type="text" [(ngModel)]='lastName' name="lastName" #lastname='ngModel' class="form-control" style="border-left:5px solid darkviolet" id="lastname" placeholder="lastname" required>
+                      <div [hidden]='lastname.pristine || lastname.valid' class="alert alert-warning">
+                        <div *ngIf='lastname.errors?.required'>
+                          please enter lastname
+                        </div>
+                      </div>
+                    
+                    </div>
+                  </div>
+
+
+                  <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" [(ngModel)]='userName' pattern="^\w+[\-]+Admin$" name="userName" #user='ngModel' style="border-left:5px solid darkviolet" class="form-control" id="username" placeholder="username" required>
+                    <div [hidden]='user.pristine || user.valid' >
+                      <div *ngIf='user.errors?.required' class="alert alert-warning">
+                        user name is required
+                      </div>
+                      
+             
+                        <div *ngIf="isAdmin == true && userName" >
+                            <div *ngIf="user.errors?.pattern" class="alert alert-warning">
+                                Admin user should have '-Admin' at the end of User Name
+                              </div>
+                        </div>
+
+                        
+                    </div>
+                  </div>
+
+  
+
+
+                  <div class="form-row">
+
+                      <div class="form-group col-md-4">
+                          <label for="countrylist">Country</label>
+                          <select [(ngModel)]="countryName" #Country="ngModel" name="countryName" (change)="onclickCountryCode()" (click)="onclickCountryCode()" class="form-control" id="inputCountry" 
+                         required>
+                          <option value="">Select</option>
+                          <option *ngFor="let country of countryNames" [value]="country.id">{{country.name}}</option>
+                          </select>
+                      </div>
+
+
+                        <div class="form-group col-md-8">
+                          <label for="mobileNumber">MobileNumber</label>
+                          <div class="input-group">
+                            <div class="input-group-text">+{{countryCode}}</div>
+                              <input type="text" #mobileNum="ngModel" pattern="^\d{10}$" id="mobileNumber" class="form-control" name="mobileNumber" [(ngModel)]="mobileNumber"
+                                placeholder="MobileNumber" required>
+                                
+                            </div>
+                            <div [hidden]="mobileNum.pristine || mobileNum.valid" class="alert alert-warning">
+                                <div *ngIf="mobileNum.errors?.required">
+                                    Please enter mobile number
+                               </div>
+                               <div *ngIf="mobileNum.errors?.pattern">
+                                  Please enter valid mobile number
+                               </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+
+                        
+                  <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="email">email</label>
+                        <input type="email" [(ngModel)]='email' pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" name='email' #mail='ngModel' class="form-control" id="email" placeholder="email" required>
+                        <div [hidden]="mail.pristine || mail.valid" class="alert alert-warning">
+                            <div *ngIf="mail.errors?.required">
+                                Please enter email
+                            </div>
+                            <div *ngIf="mail.errors?.pattern">
+                              please enter valid mail address
+                            </div>
+
+                        </div>
+                     
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="password">Password</label>
+                        <input type="password" [(ngModel)]='password'  pattern="^[A-Za-z0-9@#^&?$!%]{8,14}$" name="password" minlength="8" #pass='ngModel' class="form-control" style="border-left:5px solid darkviolet" id="password" placeholder="password" required>
+                        <div [hidden]='pass.pristine || pass.valid' class="alert alert-warning">
+                          <div *ngIf='pass.errors?.required'>
+                            please enter password
+                          </div>
+                          <div *ngIf="pass.errors?.pattern">
+                              please enter valid password 
+                          </div>
+                          <div *ngIf="pass.errors?.minlength">
+                              password must have 8 characters
+                          </div>
+
+
+                        </div>
+                      
+                      </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="checkbox">
+                          <label> 
+                            <input id="inputAdmin" [(ngModel)]="isAdmin" (change)="changeIsAdminValue(isAdmin)" type="checkbox" name="isAdmin" > 
+                            Give me Admin access
+                          </label>
+                        </div>
+                      </div>
+
+                  <button type="button" (click)="signupFunction()" class="btn btn-primary" style="background-color: purple;border:none">Sign in</button>
+                </form>
+      </div>
+
+      </div>
+    </div>
+
+
+
+  </div>

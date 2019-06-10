@@ -1,0 +1,67 @@
+.navbar 
+{
+    background: #41295a;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #2F0743, #41295a);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #2F0743, #41295a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    box-shadow: 0 3px 20px 3px  grey;
+   
+
+}
+.navbar-brand
+{
+    color:white!important;
+}
+.active a
+{
+    padding: 7px 40px;
+    
+    box-shadow: 1px 1px 10px paleturquoise;
+    
+    border-radius: 5px;
+
+}
+
+p
+{
+    color: mediumorchid;
+}
+
+.not-active a{
+    padding: 7px 40px;
+    border: 3px whitesmoke!important;
+    
+}
+
+
+.not-active a:hover{
+
+    
+    box-shadow: 1px 1px 10px paleturquoise;
+    
+    border-radius: 5px;
+
+    
+    
+}
+
+
+.nav-item {
+    
+    padding: 7px 30px; 
+}
+
+.card
+{
+    box-shadow: 5px 0px 10px darkmagenta;
+}
+h1
+{
+    font-size:6vw;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+.btn
+{
+    background-color: #2F0743;
+    color:white;
+}

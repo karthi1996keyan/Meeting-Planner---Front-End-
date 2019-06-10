@@ -1,0 +1,74 @@
+<nav class="navbar  navbar-expand-lg navbar-light bg-light"> <h3 style="color:rgb(250, 252, 253)"> Meeting Planner</h3>
+  <hr>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-end mr-auto" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-5" >
+      
+        <li class="nav-item not-active " >
+            <a class="nav-link " (click)="goToMyMeetingFunction()" style="color:paleturquoise!important;">My Meetings </a>
+        
+          </li>
+    
+      
+        <li class="nav-item not-active " >
+            <a class="nav-link " (click)="logoutFunction()" style="color:paleturquoise!important;">Logout </a>
+        
+          </li>
+    
+          <li class="nav-item active " >
+              <a class="nav-link " [routerLink]="['/login']" style="color:skyblue!important;">{{userName | uppercase}} 
+                <span class="">(online)</span> <span><i class="online-icon"></i></span></a>
+                
+      
+            </li>
+    </ul>
+  
+    
+  </div>
+</nav>
+
+
+<div class="d-xl-flex flex-xl-nowrap d-sm-flex  flex-sm-wrap" >
+   
+    <div class="container mt-5" >
+        
+         <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off" placeholder=" Start searching for a user   ">
+          
+    
+      <div class="d-xl-flex flex-xl-nowrap d-sm-flex mb-3 flex-sm-wrap  mt-3" *ngIf='allUsers;else second' >
+            <div class="p-1 mt-1 d-xl-flex flex-xl-wrap d-sm-flex flex-sm-wrap" >
+            <div *ngFor='let user of allUsers | filter:searchText | paginate:{currentPage:p,itemsPerPage:12}'>
+                
+              <div class="card m-4">
+       
+                    <div class="card-body" >
+                        <h5 class="card-title" >{{user.userName| uppercase}}</h5>
+                      
+                        <span *ngIf="user.status != 'online'" ><p class="card-text offline  justify-content-center"><b style="color:purple"></b>{{user.status}}</p></span>
+                        
+                        <span *ngIf="user.status == 'online'" ><p class="card-text online  justify-content-center"><b style="color:purple"></b>{{user.status}}</p></span>
+                       
+                        <hr style="border:1px solid darkgrey">
+                        <h6 class="card-subtitle mb-3 text-muted " style="color:#15c!important" ><u>{{user.email}}</u></h6>
+                        <p class="card-text" style="color:black"><b style="color: black;opacity:0.8">Mobile No. : </b> {{user.mobileNumber}}</p>
+                        <p class="card-text" style="color:black"><b style="color: black;opacity:0.8">Country : </b>{{user.countryName}}</p>
+                        <a (click)="goToCalenderView(user.userId)" class="card-link p-2" style="color:whitesmoke;box-shadow:2px 2px 10px grey;background-color:slateblue;border-radius:5px">Schedule meeting >>></a>
+                    </div>
+                      
+                  </div>
+              
+          </div>
+          </div>
+     </div> <!--end class flex-->
+     
+       <pagination-controls (pageChange)="p=$event" class="my-pagination"></pagination-controls>
+    
+    </div>
+    
+    <ng-template #second ><h4 style="text-align:center;color:purple;" class="mt-5">No users found</h4>
+    </ng-template>
+
+</div>

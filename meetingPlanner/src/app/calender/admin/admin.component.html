@@ -1,0 +1,495 @@
+
+<nav class="navbar  navbar-expand-lg navbar-light bg-light"> <h3 style="color:skyblue"> Meeting Planner</h3>
+  <hr>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-end mr-auto" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-5" >
+        <li class="nav-item not-active " >
+            <a class="nav-link " (click)="goToAdminDashFunction()" style="color:paleturquoise!important;">Dashboard</a>
+          </li>  
+
+        <li class="nav-item not-active " >
+            <a class="nav-link " (click)="logoutFunction()" style="color:paleturquoise!important;">Logout </a>
+          </li>
+    
+          <li class="nav-item active " >
+              <a class="nav-link " [routerLink]="['/login']" style="color:skyblue!important;">{{userName | uppercase}} 
+                <span class="online">(online)</span> <span><i class="online-icon"></i></span></a>
+                
+      
+            </li>
+    </ul>
+  
+    
+  </div>
+</nav>
+
+
+<!-- calendar view  -->
+
+
+<div class='calendar-view'>
+    <div class="row text-center">
+        <div class="col-md-4">
+          <div class="btn-group">
+            <div
+              class="btn btn-primary"
+              mwlCalendarPreviousView
+              [view]="view"
+              [(viewDate)]="viewDate"
+              (viewDateChange)="closeOpenMonthViewDay()"
+            >
+              Previous
+            </div>
+            <div
+              class="btn btn-outline-secondary"
+              mwlCalendarToday
+              [(viewDate)]="viewDate"
+            >
+              Today
+            </div>
+            <div
+              class="btn btn-primary"
+              mwlCalendarNextView
+              [view]="view"
+              [(viewDate)]="viewDate"
+              (viewDateChange)="closeOpenMonthViewDay()"
+            >
+              Next
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h3 style="color:indigo">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+        </div>
+        <div class="col-md-4">
+          <div class="btn-group">
+            <div
+              class="btn btn-primary"
+              (click)="setView(CalendarView.Month)"
+              [class.active]="view === CalendarView.Month"
+            >
+              Month
+            </div>
+            <div
+              class="btn btn-primary"
+              (click)="setView(CalendarView.Week)"
+              [class.active]="view === CalendarView.Week"
+            >
+              Week
+            </div>
+            <div
+              class="btn btn-primary"
+              (click)="setView(CalendarView.Day)"
+              [class.active]="view === CalendarView.Day"
+            >
+              Day
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div [ngSwitch]="view">
+        <mwl-calendar-month-view
+          *ngSwitchCase="CalendarView.Month"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          [activeDayIsOpen]="activeDayIsOpen"
+          (dayClicked)="dayClicked($event.day)" 
+          (eventClicked)="handleEvent('Clicked', $event.event)"
+          (eventTimesChanged)="eventTimesChanged($event)"
+        >
+        </mwl-calendar-month-view>
+        <mwl-calendar-week-view
+          *ngSwitchCase="CalendarView.Week"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          (eventClicked)="handleEvent('Clicked', $event.event)"
+          (eventTimesChanged)="eventTimesChanged($event)"
+        >
+        </mwl-calendar-week-view>
+        <mwl-calendar-day-view
+          *ngSwitchCase="CalendarView.Day"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          (eventClicked)="handleEvent('Clicked', $event.event)"
+          (eventTimesChanged)="eventTimesChanged($event)"
+        >
+        </mwl-calendar-day-view>
+    
+    
+      
+    
+</div>
+
+
+
+
+<div class="fixed-bottom">
+    <div style="float: right;">
+      <button type="button" class="btn btn-danger circle" (click)='ScheduleMeeting()' >+</button>
+    </div>
+  </div>
+ 
+
+
+
+
+
+  
+<ng-template #modalContent let-close="close">
+    <div class="modal-header">
+      <h5 class="modal-title">Event action occurred</h5>
+      <button type="button" class="close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        Action:
+        <pre>{{ modalData?.action }}</pre>
+      </div>
+      <div>
+        Event:
+        <pre>{{ modalData?.event | json }}</pre>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="close()">
+        OK
+      </button>
+    </div>
+  </ng-template>
+
+
+  <ng-template #modalDeleteConfirmation let-close="close">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Meeting</h5>
+        <button type="button" class="close" (click)="close()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h6 class="card-title">Are you sure you want to delete the following meeting?</h6>
+        <h4 class="card-title" style="color:red">{{modalData?.event.meetingTitle}}</h4>
+      </div>
+    
+      <div class="modal-footer">
+        <button type="button" class="btn btn btn-danger" (click)="deleteMeeting(modalData?.event)">Delete</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="close()">Cancel</button>
+      </div>
+    </ng-template>
+  
+  <ng-template #modalScheduleMeeting let-close="close">
+      <div class="modal-header">
+          <h5 class="modal-title">Schedule Meeting</h5>
+          <button type="button" class="close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="hostid">Host ID</label>
+                    <input type="text" #hostid="ngModel" [(ngModel)]="hostId" name="hostId" class="form-control" id="hostid" placeholder="" readonly=true required=true>
+                    <div [hidden]="hostid.pristine || hostid.valid" class="alert alert-warning">
+                        <div  *ngIf="hostid.errors?.required">
+                            Can't schedule meeting without host Id
+                        </div>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="hostname">Host name</label>
+                    <input type="text" #hostname="ngModel" [(ngModel)]="hostName" name="hostName" class="form-control" id="hostname" placeholder="" readonly=true required=true>
+                    <div [hidden]="hostname.pristine || hostname.valid" class="alert alert-warning">
+                        <div  *ngIf="hostname.errors?.required">
+                            Can't schedule meeting without host name
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="participantid">Participant ID</label>
+                      <input type="text" #participantid="ngModel" [(ngModel)]="participantId" name="participantId" class="form-control" id="participantid" placeholder="" readonly=true required=true>
+                      <div [hidden]="participantid.pristine || participantid.valid" class="alert alert-warning">
+                          <div  *ngIf="participantid.errors?.required">
+                              Can't schedule meeting without participant id
+                         </div>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="participantname">Participant Name</label>
+                      <input type="text" #participantname="ngModel" [(ngModel)]="participantName" name="participantName" class="form-control" id="participantname" placeholder="" readonly=true required=true>
+                      <div [hidden]="participantname.pristine || participantname.valid" class="alert alert-warning">
+                          <div  *ngIf="participantname.errors?.required">
+                              Can't schedule meeting without participant name
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                      <div class="form-group col-md-12">
+                        <label for="participantemail">Participant Email</label>
+                        <input type="text" #participantemail="ngModel" [(ngModel)]="participantEmail" name="participantEmail" class="form-control" id="participantemail" placeholder="" readonly=true required=true>
+                        <div [hidden]="participantemail.pristine || participantemail.valid" class="alert alert-warning">
+                            <div  *ngIf="participantemail.errors?.required">
+                                Can't schedule meeting without participant email
+                            </div>
+                        </div>
+                      
+                      </div>
+                    
+                    </div>
+                    <hr>
+  
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label for="meetingtitle">Meeting Title</label>
+                          <input type="text" #meetingtitle="ngModel" [(ngModel)]="meetingTitle" name="meetingTitle" class="form-control" id="meetingtitle" placeholder=""  required=true>
+                          <div [hidden]="meetingtitle.pristine || meetingtitle.valid" class="alert alert-warning">
+                              <div  *ngIf="meetingtitle.errors?.required">
+                                  Can't schedule meeting without meeting title
+                              </div>
+                          </div>
+                        </div>
+                    
+                      </div>
+                      <div class="form-row">
+                          <div class="form-group col-md-12">
+                              <label for="meetingdescription">Meeting Description</label>
+                              <input type="text" #meetingdescription="ngModel" [(ngModel)]="meetingDescription" name="meetingDescription" class="form-control" id="meetingdescription" placeholder=""  required=true>
+                              <div [hidden]="meetingdescription.pristine || meetingdescription.valid" class="alert alert-warning">
+                                  <div  *ngIf="meetingdescription.errors?.required">
+                                      Can't schedule meeting without meeting description
+                                  </div>
+                              </div>
+                            </div>
+                      </div>
+                        <hr>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="">When is meeting going to happen ?</label>
+                                
+                              </div>
+                          
+                          </div> 
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                              <label for="meetingstartdate">Start Date</label>
+                              <input class="form-control" #meetingstartdate="ngModel" type="date" mwlFlatpickr name="meetingStartDate" [(ngModel)]="meetingStartDate"
+                              (ngModelChange)="refresh.next()" [altInput]="true" [convertModelValue]="true" required=true
+                              [enableTime]="true" dateFormat="Y-m-dTH:i"  altFormat="F j, Y H:i" placeholder="Not set"/>
+                              <div [hidden]="meetingstartdate.pristine || meetingstartdate.valid" class="alert alert-warning">
+                                  <div  *ngIf="meetingstartdate.errors?.required">
+                                      Can't schedule meeting without meeting start date
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="meetingenddate">End Date</label>
+                              
+                              <input class="form-control" #meetingenddate="ngModel" type="date" mwlFlatpickr  name="meetingEndDate" [(ngModel)]="meetingEndDate"
+                              (ngModelChange)="refresh.next()" [altInput]="true" [convertModelValue]="true" required=true
+                              [enableTime]="true" dateFormat="Y-m-dTH:i"  altFormat="F j, Y H:i" placeholder="Not set"/>
+  
+                              <div [hidden]="meetingenddate.pristine || meetingenddate.valid" class="alert alert-warning">
+                                  <div  *ngIf="meetingenddate.errors?.required">
+                                      Can't schedule meeting without meeting end date
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                     
+  
+  
+                
+                <div class="form-group">
+                  <label for="meetingvenue">Where is meeting going to happen ?</label>
+                  <input type="text" #meetingvenue="ngModel" [(ngModel)]="meetingPlace" [value]="modalData" name="meetingPlace" class="form-control" id="meetingvenue" placeholder="Venue" required=true>
+                  <div [hidden]="meetingvenue.pristine || meetingvenue.valid" class="alert alert-warning">
+                      <div  *ngIf="meetingvenue.errors?.required">
+                          Can't schedule meeting without meeting place
+                      </div>
+                  </div>
+                </div>
+              </form>  
+        </div>
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" (click)="CreateMeeting()">Schedule</button>
+          
+      </div>
+    </ng-template>
+  
+    <ng-template #modalAlertToastr let-close="close">
+        <div class="modal-header">
+          <h5 class="modal-title">Meeting Reminder</h5>
+          <button type="button" class="close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h6 class="card-title">Your meeting <span><i> {{modalData?.event.meetingTitle}} </i></span> will start soon!</h6>
+        </div>
+      
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-success" (click)="modalData?.event.remindMe=true;reminder=true;close()">Snooze</button>
+          <button type="button" class="btn btn-outline-secondary" (click)="modalData?.event.remindMe=false;reminder=true;close()">Dismiss</button>
+        </div>
+      </ng-template>
+      
+
+    
+  <ng-template #modalUpdateMeeting let-close="close">
+      <div class="modal-header">
+        <h5 class="modal-title">Schedule Meeting</h5>
+        <button type="button" class="close" (click)="close()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="hostid">Host ID</label>
+                  <input type="text" #hostid="ngModel" [(ngModel)]="hostId" name="hostId" class="form-control" id="hostid" placeholder="" readonly=true required=true>
+                  <div [hidden]="hostid.pristine || hostid.valid" class="alert alert-warning">
+                      <div  *ngIf="hostid.errors?.required">
+                          Can't schedule meeting without host Id
+                      </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="hostname">Host name</label>
+                  <input type="text" #hostname="ngModel" [(ngModel)]="hostName" name="hostName" class="form-control" id="hostname" placeholder="" readonly=true required=true>
+                  <div [hidden]="hostname.pristine || hostname.valid" class="alert alert-warning">
+                      <div  *ngIf="hostname.errors?.required">
+                          Can't schedule meeting without host name
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <hr>
+              <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="participantid">Participant ID</label>
+                    <input type="text" #participantid="ngModel" [(ngModel)]="participantId" name="participantId" class="form-control" id="participantid" placeholder="" readonly=true required=true>
+                    <div [hidden]="participantid.pristine || participantid.valid" class="alert alert-warning">
+                        <div  *ngIf="participantid.errors?.required">
+                            Can't schedule meeting without participant id
+                       </div>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="participantname">Participant Name</label>
+                    <input type="text" #participantname="ngModel" [(ngModel)]="participantName" name="participantName" class="form-control" id="participantname" placeholder="" readonly=true required=true>
+                    <div [hidden]="participantname.pristine || participantname.valid" class="alert alert-warning">
+                        <div  *ngIf="participantname.errors?.required">
+                            Can't schedule meeting without participant name
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                      <label for="participantemail">Participant Email</label>
+                      <input type="text" #participantemail="ngModel" [(ngModel)]="participantEmail" name="participantEmail" class="form-control" id="participantemail" placeholder="" readonly=true required=true>
+                      <div [hidden]="participantemail.pristine || participantemail.valid" class="alert alert-warning">
+                          <div  *ngIf="participantemail.errors?.required">
+                              Can't schedule meeting without participant email
+                          </div>
+                      </div>
+                    
+                    </div>
+                  
+                  </div>
+                  <hr>
+
+                  <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="meetingtitle">Meeting Title</label>
+                        <input type="text" #meetingtitle="ngModel" [(ngModel)]="meetingTitle" name="meetingTitle" class="form-control" id="meetingtitle" placeholder="" required=true>
+                        <div [hidden]="meetingtitle.pristine || meetingtitle.valid" class="alert alert-warning">
+                            <div  *ngIf="meetingtitle.errors?.required">
+                                Can't schedule meeting without meeting title
+                            </div>
+                        </div>
+                      </div>
+                  
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="meetingdescription">Meeting Description</label>
+                            <input type="text" #meetingdescription="ngModel" [(ngModel)]="meetingDescription" name="meetingDescription" class="form-control" id="meetingdescription" placeholder=""  required=true>
+                            <div [hidden]="meetingdescription.pristine || meetingdescription.valid" class="alert alert-warning">
+                                <div  *ngIf="meetingdescription.errors?.required">
+                                    Can't schedule meeting without meeting description
+                                </div>
+                            </div>
+                          </div>
+                    </div>
+                      <hr>
+                      <div class="form-row">
+                          <div class="form-group col-md-12">
+                              <label for="">When is meeting going to happen ?</label>
+                              
+                            </div>
+                        
+                        </div> 
+                      <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <label for="meetingstartdate">Start Date</label>
+                            <input class="form-control" #meetingstartdate="ngModel" type="date" mwlFlatpickr name="meetingStartDate" [(ngModel)]="meetingStartDate"
+                            (ngModelChange)="refresh.next()" [altInput]="true" [convertModelValue]="true" required=true
+                            [enableTime]="true" dateFormat="Y-m-dTH:i"  altFormat="F j, Y H:i" placeholder="Not set"/>
+                            <div [hidden]="meetingstartdate.pristine || meetingstartdate.valid" class="alert alert-warning">
+                                <div  *ngIf="meetingstartdate.errors?.required">
+                                    Can't schedule meeting without meeting start date
+                                </div>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="meetingenddate">End Date</label>
+                            
+                            <input class="form-control" #meetingenddate="ngModel" type="date" mwlFlatpickr  name="meetingEndDate" [(ngModel)]="meetingEndDate"
+                            (ngModelChange)="refresh.next()" [altInput]="true" [convertModelValue]="true" required=true
+                            [enableTime]="true" dateFormat="Y-m-dTH:i"  altFormat="F j, Y H:i" placeholder="Not set"/>
+
+                            <div [hidden]="meetingenddate.pristine || meetingenddate.valid" class="alert alert-warning">
+                                <div  *ngIf="meetingenddate.errors?.required">
+                                    Can't schedule meeting without meeting end date
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                   
+
+
+              
+              <div class="form-group">
+                <label for="meetingvenue">Where is meeting going to happen ?</label>
+                <input type="text" #meetingvenue="ngModel" [(ngModel)]="meetingPlace" [value]="modalData" name="meetingPlace" class="form-control" id="meetingvenue" placeholder="Venue" required=true>
+                <div [hidden]="meetingvenue.pristine || meetingvenue.valid" class="alert alert-warning">
+                    <div  *ngIf="meetingvenue.errors?.required">
+                        Can't schedule meeting without meeting place
+                    </div>
+                </div>
+              </div>
+            </form>  
+      </div>
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" (click)="UpdateMeeting()">Update meeting</button>
+          
+          <button type="submit" class="btn btn-primary" (click)="deleteMeetingConfirm()">Delete</button>
+          
+      </div>
+    </ng-template>
+  
