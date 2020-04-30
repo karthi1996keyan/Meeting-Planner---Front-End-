@@ -30,7 +30,7 @@
     "flatpickr": "^4.5.7",
     "font-awesome": "^4.7.0",
     "install": "^0.12.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "ng-bootstrap": "^1.6.3",
     "ng-pick-datetime": "^7.0.0",
     "ng2-cookies": "^1.0.12",
